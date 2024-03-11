@@ -30,6 +30,7 @@ def put_memo(req_memo:Memo):
     
 @app.delete('/memos/{memo_id}')
 def delete_memo(memo_id):
+    print(memo_id)
     for index,memo in enumerate(memos):
         if memo.id == memo_id:
             memos.pop(index)

@@ -30,6 +30,7 @@ async function deleteMemo(event) {
   const res = await fetch(`/memos/${id}`, {
     method: "DELETE",
   });
+
   readMemo();
   inputRemoveFocus();
 }
