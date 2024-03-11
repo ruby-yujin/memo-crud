@@ -20,5 +20,22 @@ def create_memo(memo:Memo):
 def read_memo():
     return memos
 
+@app.put('/memos/{memo_id}')
+def put_memo(req_memo:Memo):
+    for memo in memos:
+        if memo.id == req_memo.id:
+            memo.content = req_memo.content
+            return '성공'
+    return '그런 메모는 없음'
+    
+@app.delete('/memos/{memo_id}')
+def delete_memo(memo_id):
+    for index,memo in enumerate(memos):
+        if memo.id == memo_id:
+            memos.pop(index)
+            return '성공'
+    return '그런 메모는 없음'
+
+
 # 정적인 파일을 받아서 웹서버에서 보여주기
 app.mount("/",StaticFiles(directory="static",html=True), name="static")

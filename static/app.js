@@ -1,11 +1,40 @@
-// 메모 한개
+function inputRemoveFocus() {
+  const input = document.querySelector("#memo-input");
+  input.blur();
+}
+
+// 메모 한줄 dom에 그려주기
 function displayMemo(memo) {
   const memoUl = document.querySelector("#memo-ul");
   const memoLi = document.createElement("li");
+  const btnEdit = document.createElement("button");
+  const btnDelete = document.createElement("button");
   memoLi.innerText = `[id:${memo.id}] [${memo.content}] `;
+
+  btnEdit.innerText = "수정";
+  btnEdit.addEventListener("click", editMemo);
+  btnEdit.dataset.id = memo.id;
+
+  btnDelete.innerText = "삭제";
+  btnDelete.addEventListener("click", deleteMemo);
+  btnDelete.dataset.id = memo.id;
+
   memoUl.appendChild(memoLi);
+  memoLi.appendChild(btnEdit);
+  memoLi.appendChild(btnDelete);
 }
 
+// CRUD 중 Delete!
+async function deleteMemo(event) {
+  const id = event.target.dataset.id;
+  const res = await fetch(`/memos/${id}`, {
+    method: "DELETE",
+  });
+  readMemo();
+  inputRemoveFocus();
+}
+
+// CRUD 중 Read!
 async function readMemo() {
   const res = await fetch("/memos");
   const jsonRes = await res.json();
@@ -16,6 +45,7 @@ async function readMemo() {
   jsonRes.forEach(displayMemo);
 }
 
+// CRUD 중 Create!
 async function createMemo(value) {
   // const res = await fetch("/memos"); -> 이건 get 요청이잖아, 값을 update 하려면
   // POST 요청을 받아야해 fetch("해당주소",{여기에 아래처럼 header:{}, body:{} 써줘야해  })
@@ -33,6 +63,25 @@ async function createMemo(value) {
   //   const jsonRes = await res.json();
   //   console.log(jsonRes);
   readMemo();
+}
+
+// CRUD 중 Update!
+async function editMemo(event) {
+  const id = event.target.dataset.id;
+  const editInput = prompt("수정할 입력값을 주세요");
+
+  const res = await fetch(`/memos/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id: id,
+      content: editInput,
+    }),
+  });
+  readMemo();
+  inputRemoveFocus();
 }
 
 function handleSubmit(event) {
